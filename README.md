@@ -29,6 +29,9 @@ Copy the `config.js.dist` to `config.js`.
 mv config.js.dist config.js
 ```
 
+Run `npm install` to install the dependencies. Run `node index.js` to start 
+the server.
+
 ### Configuration
 
 **`server`**

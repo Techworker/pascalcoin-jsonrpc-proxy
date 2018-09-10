@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 });
 
 if(config.basicAuth.enabled === true) {
-    app.use(basicAuth({
+    app.use(expressBasicAuth({
         users: config.basicAuth.users,
         unauthorizedResponse: () => {
             return {
@@ -35,19 +35,19 @@ if(config.basicAuth.enabled === true) {
 }
 
 // if ssl is enabled, start https server
-if(config.ssl.enabled) {
+if(config.ssl.enabled === true) {
     https.createServer({
         key: fs.readFileSync(config.ssl.key),
         cert: fs.readFileSync(config.ssl.cert)
-    }, app).listen(config.port, config.host);
+    }, app).listen(config.server.port, config.server.host);
 } else {
     // standard server
-    http.createServer(app).listen(config.port, config.host);
+    http.createServer(app).listen(config.server.port, config.server.host);
 }
 
 
 // listen to post requests
-app.post(config.path, function (request, response, next)
+app.post(config.server.path, function (request, response, next)
 {
     let rpc;
 

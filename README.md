@@ -9,7 +9,7 @@ It allows to add the following functionalities:
  - SSL
 
 It uses [http://expressjs.com/](http://expressjs.com/) and can easily be 
-extended with more functionalities.
+extended with more functionalities if you fork the repo.
 
 Donations in form of PascalCoin welcome! PASA `55033-26`.
 

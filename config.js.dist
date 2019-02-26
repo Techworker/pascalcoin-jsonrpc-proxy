@@ -67,5 +67,32 @@ module.exports = {
         multioperationsignoffline: true,
         multioperationsignonline: true,
         operationsdelete: true,
+    },
+    hooks: {
+        before: {
+            // will be called for every request, BEFORE the hook of the method itself
+            '*': function(method, params) {
+                return params;
+            },
+
+            findaccounts: function(params) {
+                if(params.max !== undefined && params.max > 100) {
+                    throw new Error("Invalid MAX value, allowed 100");
+                }
+
+                return params;
+            }
+        },
+        after: {
+            // will be called for every request, BEFORE the hook of the method itself
+            '*': function(method, data) {
+                return data;
+            },
+
+            nodestatus: function(data) {
+                delete data.result.nodeservers;
+                return data;
+            }
+        }
     }
 };

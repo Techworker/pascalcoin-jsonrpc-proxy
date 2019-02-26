@@ -29,6 +29,9 @@ Copy the `config.js.dist` to `config.js`.
 mv config.js.dist config.js
 ```
 
+**IMPORTANT! Please note that the config has some example hooks! Remove them in case
+they are not needed**
+
 Run `npm install` to install the dependencies. Run `node index.js` to start 
 the server.
 
@@ -81,3 +84,72 @@ The list of key values where the key is the name of the JSON-RPC method and the
 value a boolean value identifiying whether a call to a method is allowed or not.
 
 Calls to methods that are not defined here are automatically denied.
+
+**`hooks.before`**
+
+It is possible to detect malicious parameters and check them. While the node 
+itself does all the important parameter checking, it might still be useful to
+check some parameter values to restrict access to the methods in a more granular
+way.
+
+Each before-hook method gets the params that will be used for the request. 
+The hook function MUST return either the original or the altered parameters.
+
+To deny access to a method with in case of a malicious or unwanted parameter
+value, the method can throw an `Error` which will lead to the request being 
+aborted and the error will be returned to the requester. The request will not
+be delegated to the node.
+
+There are 2 ways to check parameters for a method call.
+
+1. Setup a '*' key with a method.
+   This method will be called for every RPC call.
+2. Setup a specified method
+   This method will be called for a matching RPC call.
+
+```js
+// .. 
+{
+    hooks: {
+        before: {
+            '*': function(method, params) {
+                // check depending on method and params
+                return params;
+            }
+            findaccounts: function(params) {
+                // we know the method, so check params
+                if(params.max !== undefined && params.max > 100) {
+                    throw new Error("Invalid MAX value, allowed 100");
+                }
+
+                // make sure to return
+                return params;
+            }
+        }
+    }
+}
+```
+   
+**`hooks.after`**
+
+The after hooks will be called when the response is received from the node. 
+You can alter the response or just return it.
+
+```js
+// .. 
+{
+    hooks: {
+        after: {
+            '*': function(method, data) {
+                // act on method and data
+                return data;
+            }
+            nodestatus: function(data) {
+                // remove nodeservers info
+                delete data.result.nodeservers;
+                return data;
+            }
+        }
+    }
+}
+```
